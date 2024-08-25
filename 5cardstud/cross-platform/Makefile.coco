@@ -94,7 +94,6 @@ $(BUILD_DIR)/%.c.o: %.c
 $(BUILD_DIR)/%.s.o: %.s
 	$(MKDIR_P) $(dir $@)
 	$(ASM) $(ASFLAGS) -fobj --output=$@ $<
-	
 
 .PHONY: clean
 

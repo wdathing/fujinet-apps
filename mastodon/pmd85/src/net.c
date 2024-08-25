@@ -1,7 +1,7 @@
-#include <cmoc.h>
-#include <coco.h>
-#include "dw.h"
+#include <string.h>
 #include "net.h"
+#include "dwread.h"
+#include "dwwrite.h"
 
 #define OP_NET 0xE3
 
@@ -82,14 +82,15 @@ byte net_error(byte devid)
  * @param buf Target buffer 
  * @param len Length 
  */
-byte net_get_response(byte devid, byte *buf, int len)
+byte net_get_response(byte devid, byte *buf, unsigned short len)
 {
     struct _getresponsecmd
     {
         byte opcode;
         byte id;
         byte command;
-        int len;
+        byte len_hi;
+        byte len_lo;
     } grc;
 
     byte z=0;
@@ -97,7 +98,8 @@ byte net_get_response(byte devid, byte *buf, int len)
     grc.opcode = OP_NET;
     grc.id = devid;
     grc.command = CMD_RESPONSE;
-    grc.len = len;
+    grc.len_hi = len >> 8;
+    grc.len_lo = len & 0xFF;
 
     net_ready(devid);
     dwwrite((byte *)&grc, sizeof(grc));
@@ -202,7 +204,10 @@ byte net_status(byte devid, NetworkStatus *ns)
 
     net_ready(devid);
     dwwrite((byte *)&sc, sizeof(sc));
-    net_get_response(devid,(byte *)ns, sizeof(NetworkStatus));
+    net_get_response(devid, (byte *)ns, sizeof(NetworkStatus));
+    // endian swap
+    unsigned short tmp = (ns->bytesWaiting >> 8) | (ns->bytesWaiting << 8);
+    ns->bytesWaiting = tmp;
     
     return net_error(devid);
 }
@@ -214,7 +219,7 @@ byte net_status(byte devid, NetworkStatus *ns)
  * @param len # of bytes to read (0-65535)
  * @return error result.
  */
-byte net_read(byte devid, byte *buf, unsigned int len)
+byte net_read(byte devid, byte *buf, unsigned short len)
 {
     byte z = 0;
 
@@ -223,13 +228,15 @@ byte net_read(byte devid, byte *buf, unsigned int len)
         byte opcode;
         byte id;
         byte command;
-        unsigned int len;
+        byte len_hi;
+        byte len_lo;
     } rc;
 
     rc.opcode = OP_NET;
     rc.id = devid;
     rc.command = CMD_READ;
-    rc.len = len;
+    rc.len_hi = len >> 8;
+    rc.len_lo = len & 0xFF;
 
     net_ready(devid);
     dwwrite((byte *)&rc, sizeof(rc));
