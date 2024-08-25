@@ -312,7 +312,7 @@ void drawLogo() {
 
 
 void resetGraphics() {
- 
+ closeCardGame();
 }
 
 void initGraphics() {

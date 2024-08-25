@@ -3,10 +3,6 @@
 /*
   Network functionality
 */
-//#include <apple2.h>
-//#include <string.h>
-//#include <conio.h>
-//#include <stdbool.h>
 #include <coco.h>
 
 #include "../platform-specific/appkey.h"
@@ -26,6 +22,8 @@
 
 static uint8_t trans_type = OPEN_TRANS_CRLF;
 static uint8_t err = 0;
+extern uint8_t gbNetOpen;
+
 
 #define NET_DEBUG 1
 
@@ -81,12 +79,15 @@ uint16_t getJsonResponse(char *url, char *query, unsigned char *buffer, uint16_t
     byte err;
     uint16_t i;
 
-    err = net_open(0,HTTP_GET,NO_TRANSLATION,url);
-
-    if (err != SUCCESS)
+    if (!gbNetOpen)
     {
-        drawText(0,160,"OPEN ERROR.");
-        return;
+      err = net_open(0,HTTP_GET,NO_TRANSLATION,url);
+
+      if (err != SUCCESS)
+      {
+          drawText(0,160,"OPEN ERROR.");
+          return;
+      }
     }
 
     // Set channel mode to JSON
@@ -102,7 +103,8 @@ uint16_t getJsonResponse(char *url, char *query, unsigned char *buffer, uint16_t
 
     fetch_json(query,buffer,&i);
 
-    net_close(0);    
+    if (!gbNetOpen)
+      net_close(0);    
     return i;
 }
 #endif

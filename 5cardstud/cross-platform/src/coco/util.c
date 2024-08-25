@@ -2,6 +2,7 @@
   Platform specific utilities that don't fit in any category
 */
 #include <coco.h>
+extern uint8_t gbNetOpen;
 
 void resetTimer()
 {
@@ -14,6 +15,9 @@ int getTime()
 
 void quit()
 {
+  resetGraphics();
+  if (gbNetOpen)
+    net_close(0);
   exit(0);
 }
 

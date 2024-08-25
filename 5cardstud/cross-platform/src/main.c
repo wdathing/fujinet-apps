@@ -43,6 +43,11 @@ signed char inputDirX, inputDirY;
 uint16_t prevPot, rx_len, maxJifs;
 bool noAnim, doAnim, finalFlip, inputTrigger;
 
+#ifdef _CMOC_VERSION_
+// help gameplay speed on dw interface on Coco
+uint8_t gbNetOpen = false;
+#endif
+
 unsigned char playerX[8], playerY[8], moveLoc[5];
 signed char playerBetX[8], playerBetY[8], playerDir[8];
 
@@ -61,13 +66,25 @@ int main(void)
 void main(void)
 #endif /* _CMOC_VERSION_ */
 { 
-  memset(playerName,0,sizeof(playerName));
   initGraphics(); 
   initSound();
 
 #ifdef _CMOC_VERSION_
-//  network_init();
-#endif
+#define HTTP_GET 12
+#define NO_TRANSLATION 0
+  int err = 0;
+  int iRetries = 0;
+  do
+  {
+    err = net_open(0,HTTP_GET,NO_TRANSLATION,serverEndpoint);
+  } while (err < 0 && iRetries++<3);
+  if (err<0)
+  {
+    centerStatusText("CANNOT OPEN NETWORK");
+    pause(30);
+    quit();
+  }
+  #endif
 
   loadPrefs();
 
@@ -100,7 +117,9 @@ void main(void)
   }
 
 #ifdef _CMOC_VERSION_
-    closeCardGame();
+  if (gbNetOpen)
+    net_close(0);
+  
   return 0;
 #endif /* CMOC_VERSION_  */
 }
