@@ -31,6 +31,7 @@ void updateState(unsigned char isTables) {
   
   // Load state by looping through result and extracting each string at each EOL character
   end = rx_buf + rx_len;
+  //printf("rxlen=%u\n", rx_len);
   
   parent = NULL;
 
@@ -45,12 +46,16 @@ void updateState(unsigned char isTables) {
 
     // Convert line endings to string terminators 
     if (c==LINE_ENDING)
+    {
       POKE(line,0);
-    
+      printf("L");
+    }
+
+#ifndef _CMOC_VERSION_    
     // Convert all letters to certain case if needed (e.g. C64)
     else if (c>=ALT_LETTER_START && c<=ALT_LETTER_END) 
       POKE(line,c + ALT_LETTER_AND);
-    
+#endif    
   }
   //write_appkey(0x9999,  1, 2, rx_buf);
 
@@ -87,6 +92,7 @@ void updateState(unsigned char isTables) {
         switch (key[0]) {
           case 't': 
             state.tables[tableCount].table = value;
+            printf("table!\n");
             break;
           case 'n': 
             state.tables[tableCount].name = value; 
@@ -178,15 +184,15 @@ void updateState(unsigned char isTables) {
 }
 
 unsigned char apiCall(const char *path) {
-  printf("apicall: ");
-  printf("%s:%s:%s\n", serverEndpoint, path, query);
+//  printf("apicall: ");
+//  printf("%s:%s:%s\n", serverEndpoint, path, query);
   
   strcpy(urlBuffer, serverEndpoint);
   strcat(urlBuffer, path);
-  strcat(urlBuffer, query);
+//  strcat(urlBuffer, query);
   
-  rx_len = getJsonResponse(urlBuffer, rx_buf, sizeof(rx_buf));
-  printf("rx_len= %i\n", rx_len);
+  rx_len = getJsonResponse(urlBuffer, query, rx_buf, sizeof(rx_buf));
+//  printf("rxlen= %u\n", rx_len);
   return rx_len>=0;
 }
 

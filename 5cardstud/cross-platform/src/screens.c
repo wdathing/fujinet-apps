@@ -136,7 +136,6 @@ bool inputFieldCycle(uint8_t x, uint8_t y, uint8_t max, uint8_t* buffer) {
       done=1;
       // remove cursor
       drawText(x+1+i,y," ");
-      printf("return");
     } else if (inputKey == KEY_BACKSPACE && curx>0) {
       buffer[--curx]=0;
       drawText(x+1+curx,y," ");
@@ -148,7 +147,7 @@ bool inputFieldCycle(uint8_t x, uint8_t y, uint8_t max, uint8_t* buffer) {
     }
 
     drawText(x,y, buffer);
-    drawChip(x+curx,y);
+//    drawChip(x+curx,y);
 
     return done==1;
   }
@@ -261,11 +260,13 @@ void showTableSelectionScreen() {
     drawBuffer();
     waitvsync();
 
-    if (/* skipApiCall || */ apiCall("tables")) {
+    if ( skipApiCall || apiCall("tables?dev=1")) {
       if (!skipApiCall) {
+        printf("update state\n");
         updateState(true);
       }
       skipApiCall=0;
+//printf("table count = %d\n", tableCount);
       if (tableCount>0) {
         for(i=0;i<tableCount;++i) {
           drawText(6,8+i*2, state.tables[i].name);

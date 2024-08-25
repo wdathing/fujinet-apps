@@ -13,6 +13,7 @@
 #include "../platform-specific/graphics.h"
 #include "../misc.h"
 #include "cardgame.h"
+#include "../../../../../bgraph-0.1.8/Primitive.h"  /* bgraph */
 
 #define BOTTOM 175
 #define RED_VAL_1 ROP_OR(0b11010100)
@@ -46,6 +47,8 @@
 
 char blah = 'c';
 bool always_render_full_cards = 1;
+Primitive_setPixelFuncPtr setPixelFuncPtr;
+extern void *screenBuffer;
 
 unsigned char colorMode=0;
 
@@ -125,8 +128,9 @@ void drawChip(unsigned char x, unsigned char y) {
   // Solve gfx later once layout is finalized
   //hires_putc(x,y*8-4,ROP_OR(0x55), 'O');
 //  hires_putc(x,y*8-3,ROP_CPY, 0x22);
-  hires_putc(x,y,ROP_CPY, 0x22);
   
+  //hires_putc(x,y,ROP_CPY, 0x22);
+  drawCharAtAddressWithoutMovingCursor(0x2a, screenBuffer + (((word) y) << 8) + x, TRUE);
 }
 
 
@@ -217,6 +221,24 @@ void hideLine(unsigned char x, unsigned char y, unsigned char w) {
 }
 
 void drawBox(unsigned char x, unsigned char y, unsigned char w, unsigned char h) {
+  unsigned char x1; 
+  unsigned char x2;
+  unsigned char y1;
+  unsigned char y2;
+
+  x++;
+  y++;
+  h++;
+  x1= x *8 - 4; 
+  x2= x1 + w * 8;
+  y1= y * 8 - 4;
+  y2= y1 + h*8;
+
+
+
+  Primitive_rectangle( x1, y1, x2, y2, 1, Primitive_setPixelPmode4, screenBuffer);
+
+#if 0  
   y=y*8-4;
 
   // Top Corners
@@ -250,7 +272,7 @@ void drawBox(unsigned char x, unsigned char y, unsigned char w, unsigned char h)
   y+=8;
   // Bottom Corners
   hires_putc(x,y,ROP_CPY, 0x3d);hires_putc(x+w+1,y,ROP_CPY, 0x3e);
-  
+#endif  
 
 }
 
@@ -278,7 +300,9 @@ void resetGraphics() {
 
 void initGraphics() {
   hires_Init();
- // enableDoubleBuffer();
+// enableDoubleBuffer();
+  setPixelFuncPtr = Primitive_setPixelPmode4;
+
 }
 
 void waitvsync() {

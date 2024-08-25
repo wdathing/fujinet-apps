@@ -17,16 +17,17 @@ CARDGAME_LIB_DIR = src/coco/lib/cardgame
 # BControl is only used by the OS-9 version.
 BCONTROL_LIB = bcontrol
 BCONTROL_LIB_DIR = ../../../bcontrol
+BGRAPH_LIB = bgraph
+BGRAPH_LIB_DIR = ../../../bgraph-0.1.8
 FUJINET_LIB_DIR = ../../../fujinet-lib
 FUJINET_LIB = fujinet
 
 LIBS = \
 	-L src/coco/lib/cardgame -l$(CARDGAME_LIB) \
-	-L ../../../fujinet-lib -l$(FUJINET_LIB) 
+	-L $(BCONTROL_LIB_DIR) -l$(BCONTROL_LIB) \
+	-L $(BGRAPH_LIB_DIR) -l$(BGRAPH_LIB)
 
-#	-L $(BCONTROL_LIB_DIR) -l$(BCONTROL_LIB) \
-
-#	-L ./src/coco -lfujinet \
+#	-L ../../../fujinet-lib -l$(FUJINET_LIB) \
 
 
 PACKAGE = 5CARD
@@ -41,11 +42,12 @@ CFLAGS= \
 			-fomit-frame-pointer \
 			-DNDEBUG \
 			-I $(CARDGAME_LIB_DIR) \
-			-I $(FUJINET_LIB_DIR) \
+			-I $(BCONTROL_LIB_DIR) \
 			-DVERSION=\"$(VERSION)\" \
 			-O2 -DDISABLE_SOUND
 # -DDISABLE_GRAPHICS
 #			-I $(BCONTROL_LIB_DIR) \
+			-I $(FUJINET_LIB_DIR) \
 
 #			--check-null \
 #			-D_CMOC_CHECK_STACK_OVERFLOW_ --check-stack\
@@ -67,7 +69,7 @@ OTHER_APPS := \
 ~/Workspace/bgraph-0.1.8/cc3demo.bin \
 ~/Workspace/bgraph-0.1.8/shapes.bin \
 ~/Workspace/bgraph-0.1.8/testclip.bin \
-~/Workspace/cardgame/cardgame.bin \
+~/Workspace/cardgame-lib/cardgame.bin \
 ~/Workspace/color8-0.1.14/color8.bin
 
 
@@ -79,11 +81,12 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) $(CARDGAME_LIB_DIR)/lib$(CARDGAME_LIB).a
 	$(RM) $(TARGET_EXEC) $(TARGET_EXEC).dsk
 	decb dskini $(TARGET_EXEC).dsk
 	writecocofile $(TARGET_EXEC).dsk $(TARGET_EXEC).bin 
-#	$(foreach path,$(OTHER_APPS),writecocofile $(TARGET_EXEC).dsk $(path) ;) 
+	$(foreach path,$(OTHER_APPS),writecocofile $(TARGET_EXEC).dsk $(path) ;) 
 	cp $(TARGET_EXEC).dsk ~/tnfs/
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) intermediates
 	$(MKDIR_P) $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 

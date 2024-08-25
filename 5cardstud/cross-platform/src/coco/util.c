@@ -14,6 +14,7 @@ int getTime()
 
 void quit()
 {
+  exit(0);
 }
 
 static char lastchar;

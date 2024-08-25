@@ -5,7 +5,10 @@
  * @license gpl v. 3
  */
 
-#include <fujinet-fuji.h>
+#include <coco.h>
+#define true 1
+#define false 0
+#include "../fujinet-fuji.h"
 //#include <string.h>
 //#include <stdio.h>
 
