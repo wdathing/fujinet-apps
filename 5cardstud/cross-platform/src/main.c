@@ -28,7 +28,8 @@
 #include "screens.h"
 
 // Store default server endpoint in case lobby did not set app key
-char serverEndpoint[50] = "N:http://5card.carr-designs.com/";
+//char serverEndpoint[50] = "N:http://5card.carr-designs.com/";
+char serverEndpoint[50] = "N:http://192.168.247.3:8080/";
 //char serverEndpoint[50] = "http://127.0.0.1:8080/"; // "N: for apple, but not C64"
 
 char query[50] = ""; //?table=blue&player=ERICAPL2";
@@ -65,7 +66,7 @@ void main(void)
   initSound();
 
 #ifdef _CMOC_VERSION_
-  //network_init();
+//  network_init();
 #endif
 
   loadPrefs();

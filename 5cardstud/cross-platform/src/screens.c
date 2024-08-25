@@ -239,7 +239,15 @@ void showTableSelectionScreen() {
   static uint8_t shownChip;
   static unsigned char tableIndex=0;
   static uint8_t skipApiCall;
+#ifdef _CMOC_VERSION_  
+  const uint8_t startCol = 2;
+  const uint8_t chipCol = 0;
+#else
+  const uint8_t startCol = 6;
+  const uint8_t chipCol =4;
+#endif  
   skipApiCall=0;
+  inputTrigger = 0;
   // An empty query means a table needs to be selected
   while (strlen(query)==0) {
     
@@ -253,26 +261,26 @@ void showTableSelectionScreen() {
 
       
     centerText(3, "CHOOSE A TABLE TO JOIN");
-    drawText(6,6, "TABLE");
+    drawText(startCol,6, "TABLE");
     drawText(WIDTH-13,6, "PLAYERS");
-    drawLine(6,7,WIDTH-12);
+    drawLine(startCol,7,WIDTH-13+7); // start of text PLAYERS plus width of "Players"
 
     drawBuffer();
     waitvsync();
 
     if ( skipApiCall || apiCall("tables?dev=1")) {
       if (!skipApiCall) {
-        printf("update state\n");
         updateState(true);
       }
       skipApiCall=0;
 //printf("table count = %d\n", tableCount);
       if (tableCount>0) {
         for(i=0;i<tableCount;++i) {
-          drawText(6,8+i*2, state.tables[i].name);
-          drawText((unsigned char)(WIDTH-6-strlen(state.tables[i].players)), 8+i*2, state.tables[i].players);
+          int textLine = 8+i*2;
+          drawText(startCol,textLine, state.tables[i].name);
+          drawText((unsigned char)(WIDTH-startCol-strlen(state.tables[i].players)), textLine, state.tables[i].players);
           if (state.tables[i].players[0]>'0') {
-            drawText((unsigned char)(WIDTH-6-strlen(state.tables[i].players)-2), 8+i*2, "*");
+            drawText((unsigned char)(WIDTH-startCol-strlen(state.tables[i].players)-2), textLine, "*");
           }
         }
       } else {
@@ -312,20 +320,20 @@ void showTableSelectionScreen() {
         
         if (!shownChip || (tableCount>0 && inputDirY)) {
 
-          drawText(4,8+tableIndex*2," ");
+          drawText(chipCol,8+tableIndex*2," ");
           tableIndex+=inputDirY;
           if (tableIndex==255) 
             tableIndex=tableCount-1;
           else if (tableIndex>=tableCount)
             tableIndex=0;
 
-          drawChip(4,8+tableIndex*2);
+          drawChip(chipCol,8+tableIndex*2);
 
           soundCursor();
           shownChip=1;
         }
       }
-      
+
       enableDoubleBuffer();
       
       if (inputTrigger) {

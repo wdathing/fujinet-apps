@@ -85,6 +85,8 @@ void clearStatusBar() {
    // hires_putc(i,175,ROP_CPY,' ');
    // hires_putc(i,183,ROP_CPY,' ');
  // }
+  drawTextAt(0, HEIGHT-2, "                                ");
+  drawTextAt(0, HEIGHT-1, "                                ");
 }
 
 void drawBuffer() {
@@ -92,19 +94,19 @@ void drawBuffer() {
 }
 
 void drawStatusTextAt(unsigned char x, char* s) {
-  drawTextAt(x, BOTTOM+5, s);
+  drawTextAt(x, HEIGHT-1, s);
 }
 
 void drawStatusText(char* s) {
   static char* comma;
   clearStatusBar();
-  if (strlen(s)>40) {
+  if (strlen(s)>WIDTH) {
     comma = s;
     while (*comma++!=',');
     comma[0]=0;
     comma++;
-    drawTextAt(0, BOTTOM-1, s);
-    drawTextAt(0, BOTTOM+8, comma);
+    drawTextAt(0, HEIGHT-2, s);
+    drawTextAt(0, HEIGHT-1, comma);
   } else {
     drawStatusTextAt(0, s);
   }
@@ -112,7 +114,7 @@ void drawStatusText(char* s) {
 }
 
 void drawStatusTimer() {
-  hires_putcc(38,BOTTOM+5,ROP_CPY, 0x2829);
+//  hires_putcc(38,BOTTOM+5,ROP_CPY, 0x2829);
 }
   
 
@@ -214,6 +216,21 @@ void drawCard(unsigned char x, unsigned char y, unsigned char partial, const cha
 
 void drawLine(unsigned char x, unsigned char y, unsigned char w) {
 //   hires_Mask(x,y*8-3,w,2, 0xa9ff); 
+  unsigned char x1; 
+  unsigned char x2;
+  unsigned char y1;
+  unsigned char y2;
+
+  x++;
+  y++;
+  x1= x *8 - 4; 
+  x2= x1 + w * 8;
+  y1= y * 8 - 4;
+  y2= y1; // + h*8;
+
+
+
+  Primitive_line( x1, y1, x2, y2, 1, Primitive_setPixelPmode4, screenBuffer);
 }
 
 void hideLine(unsigned char x, unsigned char y, unsigned char w) {

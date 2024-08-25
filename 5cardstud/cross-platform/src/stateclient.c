@@ -48,7 +48,6 @@ void updateState(unsigned char isTables) {
     if (c==LINE_ENDING)
     {
       POKE(line,0);
-      printf("L");
     }
 
 #ifndef _CMOC_VERSION_    
@@ -92,7 +91,6 @@ void updateState(unsigned char isTables) {
         switch (key[0]) {
           case 't': 
             state.tables[tableCount].table = value;
-            printf("table!\n");
             break;
           case 'n': 
             state.tables[tableCount].name = value; 
@@ -189,7 +187,7 @@ unsigned char apiCall(const char *path) {
   
   strcpy(urlBuffer, serverEndpoint);
   strcat(urlBuffer, path);
-//  strcat(urlBuffer, query);
+  strcat(urlBuffer, query);
   
   rx_len = getJsonResponse(urlBuffer, query, rx_buf, sizeof(rx_buf));
 //  printf("rxlen= %u\n", rx_len);

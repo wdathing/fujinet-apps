@@ -12,10 +12,10 @@
 void drawTextAt(unsigned char x, unsigned char y, char*s);
 
 #define CHAR_HEIGHT             8
-#define SCREEN_WIDTH            40
+#define SCREEN_WIDTH            32
 #define SCREEN_HEIGHT           192
 
-#define BOTTOM 175
+#define BOTTOM 16
 
 extern unsigned char charset[];
 unsigned char rop_mod[] = {0x55,0x2A};
@@ -35,8 +35,8 @@ void hires_putc(unsigned char x, unsigned char y, unsigned rop, unsigned char c)
 /*-----------------------------------------------------------------------*/
 void hires_putcc(unsigned char x, unsigned char y,unsigned rop, unsigned cc)
 {
-  drawTextAt(x,y,cc>>8);
-  drawTextAt(++x,y,cc);
+//  drawTextAt(x,y,cc>>8);
+  drawTextAt(x,y,cc);
 }
 
 #endif
