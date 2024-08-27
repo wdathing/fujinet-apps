@@ -1,5 +1,3 @@
-#ifdef _CMOC_VERSION_
-
 /*
   Graphics functionality
 */
@@ -46,7 +44,7 @@
 
 
 char blah = 'c';
-bool always_render_full_cards = 1;
+bool always_render_full_cards = 0;
 Primitive_setPixelFuncPtr setPixelFuncPtr;
 extern void *screenBuffer;
 
@@ -153,7 +151,7 @@ void resetScreen() {
 void drawCardAt(unsigned char x, unsigned char y, unsigned char partial, const char* s, bool isHidden) {
   static unsigned char suit;
   static unsigned char cardgameVal, cardgameSuit;
-
+printf("\nx= %d, y= %d\n", x, y);
   if (!isHidden)
   {
     //printf("string is %x-%x\n", (unsigned int)s[0], (unsigned int)s[1]);
@@ -233,8 +231,6 @@ void drawLine(unsigned char x, unsigned char y, unsigned char w) {
   y1= y * 8 - 4;
   y2= y1; // + h*8;
 
-
-
   Primitive_line( x1, y1, x2, y2, 1, Primitive_setPixelPmode4, screenBuffer);
 }
 
@@ -254,9 +250,7 @@ void drawBox(unsigned char x, unsigned char y, unsigned char w, unsigned char h)
   x1= x *8 - 4; 
   x2= x1 + w * 8;
   y1= y * 8 - 4;
-  y2= y1 + h*8;
-
-
+  y2= y1 + 1 + h*8;
 
   Primitive_rectangle( x1, y1, x2, y2, 1, Primitive_setPixelPmode4, screenBuffer);
 
@@ -332,6 +326,3 @@ void waitvsync() {
   // Aproximate a jiffy for the timer countdown
 //  for ( i=0;i<630;i++);
 }
-
-#endif
-
