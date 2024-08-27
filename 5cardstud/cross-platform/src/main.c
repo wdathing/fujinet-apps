@@ -69,7 +69,7 @@ void main(void)
   initGraphics(); 
   initSound();
 
-#ifdef _CMOC_VERSION_
+#if 0
 #define HTTP_GET 12
 #define NO_TRANSLATION 0
   int err = 0;

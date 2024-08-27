@@ -88,6 +88,7 @@ uint16_t getJsonResponse(char *url, char *query, unsigned char *buffer, uint16_t
           drawText(0,160,"OPEN ERROR.");
           return;
       }
+      //gbNetOpen = TRUE;
     }
 
     // Set channel mode to JSON

@@ -151,38 +151,43 @@ void resetScreen() {
 }
 
 void drawCardAt(unsigned char x, unsigned char y, unsigned char partial, const char* s, bool isHidden) {
-  static unsigned char val, red, i, suit;
-  static unsigned mid;
+  static unsigned char suit;
   static unsigned char cardgameVal, cardgameSuit;
-  mid = isHidden ? 0x7D7E : 0x0900;
-  //mid = 0x0900;
 
-//printf("string is %s\n", s);
-  // Card suit
-  switch (s[1]) {
-    case 'h' : suit=0x0A; red=1; cardgameSuit=0; break;
-    case 'd' : suit=0x0C; red=1; cardgameSuit=2; break;
-    case 'c' : suit=0x0E; red=0; cardgameSuit=3; break;
-    case 's' : suit=0x10; red=0; cardgameSuit=1; break;
-    default: suit=0x7B; red=0; cardgameSuit=4; break;
-  }
+  if (!isHidden)
+  {
+    //printf("string is %x-%x\n", (unsigned int)s[0], (unsigned int)s[1]);
+    // Card suit
+    switch (s[1]) {
+      case 'H': case 'h' : cardgameSuit=0; break;
+      case 'D': case 'd' : cardgameSuit=2; break;
+      case 'C': case 'c' : cardgameSuit=3; break;
+      case 'S': case 's' : cardgameSuit=1; break;
+      case '?':            isHidden = true; 
+      default: suit=0x7B; cardgameSuit=4; break;
+    }
 
-  // Card value
-  switch (s[0]) {
-    case 't': val=0x71; cardgameVal=10; break;
-    case 'j': val=0x73; cardgameVal=11;  break;
-    case 'q': val=0x75; cardgameVal=12;  break;
-    case 'k': val=0x77; cardgameVal=13;  break;
-    case 'a': val=0x79; cardgameVal=1;  break;
-    case '?': val=0x7B; cardgameVal=((s[1]=='h')||(s[1]=='h'))?1:2; mid=0x7B7C; break;
-    default:
-      val=0x61 + 2*(s[0]-0x32);
-      cardgameVal=(s[0]-0x32); 
+    // Card value
+    switch (s[0]) {
+      case 'T': case 't': cardgameVal=10; break;
+      case 'J': case 'j': cardgameVal=11;  break;
+      case 'Q': case 'q': cardgameVal=12;  break;
+      case 'K': case 'k': cardgameVal=13;  break;
+      case 'A': case 'a': cardgameVal=1;  break;
+      //case '?': val=0x7B; cardgameVal=((s[1]=='h')||(s[1]=='h'))?1:2; break;
+      default:
+        cardgameVal=(s[0]-'0'); 
+    }
   }
-  
-#ifndef DISABLE_GRAPHICS    
-  drawCompiledCard(cardgameVal, cardgameSuit, x, y);
+#ifndef DISABLE_GRAPHICS
+  if (isHidden)
+    drawFaceDownCard(x, y);
+  else
+    drawCompiledCard(cardgameVal, cardgameSuit, x, y);
 #endif
+
+
+  
 #if 0  
   // Card top
   //hires_putcc(x,y,ROP_O,0x0506); 
