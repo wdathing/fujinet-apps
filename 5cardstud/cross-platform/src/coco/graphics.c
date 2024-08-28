@@ -149,9 +149,7 @@ void resetScreen() {
 }
 
 void drawCardAt(unsigned char x, unsigned char y, unsigned char partial, const char* s, bool isHidden) {
-  static unsigned char suit;
   static unsigned char cardgameVal, cardgameSuit;
-printf("\nx= %d, y= %d\n", x, y);
   if (!isHidden)
   {
     //printf("string is %x-%x\n", (unsigned int)s[0], (unsigned int)s[1]);
@@ -162,7 +160,7 @@ printf("\nx= %d, y= %d\n", x, y);
       case 'C': case 'c' : cardgameSuit=3; break;
       case 'S': case 's' : cardgameSuit=1; break;
       case '?':            isHidden = true; 
-      default: suit=0x7B; cardgameSuit=4; break;
+      default:             cardgameSuit=4; break;
     }
 
     // Card value
@@ -172,16 +170,25 @@ printf("\nx= %d, y= %d\n", x, y);
       case 'Q': case 'q': cardgameVal=12;  break;
       case 'K': case 'k': cardgameVal=13;  break;
       case 'A': case 'a': cardgameVal=1;  break;
-      //case '?': val=0x7B; cardgameVal=((s[1]=='h')||(s[1]=='h'))?1:2; break;
+      case '?':           isHidden = true; break;
       default:
         cardgameVal=(s[0]-'0'); 
     }
   }
+
+
 #ifndef DISABLE_GRAPHICS
   if (isHidden)
+  {
     drawFaceDownCard(x, y);
+    printf("-");  
+  }
   else
+  {
     drawCompiledCard(cardgameVal, cardgameSuit, x, y);
+    printf("+");
+  }
+printf("%d,%d\n", x,y);
 #endif
 
 

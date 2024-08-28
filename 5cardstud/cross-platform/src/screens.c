@@ -124,8 +124,6 @@ bool inputFieldCycle(uint8_t x, uint8_t y, uint8_t max, uint8_t* buffer) {
  // }
 
 
-
-
   // Process any waiting keystrokes
   if (kbhit()) {
     done=0;
@@ -147,7 +145,7 @@ bool inputFieldCycle(uint8_t x, uint8_t y, uint8_t max, uint8_t* buffer) {
     }
 
     drawText(x,y, buffer);
-//    drawChip(x+curx,y);
+    drawChip(x+curx,y);
 
     return done==1;
   }
