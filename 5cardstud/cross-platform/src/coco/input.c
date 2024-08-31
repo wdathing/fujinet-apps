@@ -8,6 +8,9 @@ unsigned char readJoystick() {
   unsigned char result = 0;
   unsigned char btns;
 
+// disable for now  
+return 0;
+
   Joystick_selectAnalogMuxInputs(2);  // left joystick horizontal axis
   if (!Joystick_compareAxis(7))
   {

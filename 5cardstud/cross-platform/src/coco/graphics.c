@@ -10,6 +10,8 @@
 //#include<string.h>
 #include "../platform-specific/graphics.h"
 #include "../misc.h"
+
+#define USE_CARDGAME_LIB
 #include "cardgame.h"
 #include "../../../../../bgraph-0.1.8/Primitive.h"  /* bgraph */
 
@@ -130,7 +132,7 @@ void drawChip(unsigned char x, unsigned char y) {
 //  hires_putc(x,y*8-3,ROP_CPY, 0x22);
   
   //hires_putc(x,y,ROP_CPY, 0x22);
-  drawCharAtAddressWithoutMovingCursor(0x2a, screenBuffer + (((word) y) << 8) + x, TRUE);
+  drawCharAtAddressWithoutMovingCursor(0x2a, (unsigned char *)screenBuffer + (((word) y) << 8) + x, TRUE);
 }
 
 
@@ -141,7 +143,7 @@ void resetScreen() {
     // Draw the deck as a face-down card.
     //
 #ifndef DISABLE_GRAPHICS    
-    moveCursor(DECK_COL, DECK_ROW >> 3);
+//    moveCursor(DECK_COL, DECK_ROW >> 3);
     drawFaceDownCard(DECK_ROW + PIXEL_ROWS_PER_TEXT_ROW, DECK_COL);
 #endif    
 
@@ -149,6 +151,7 @@ void resetScreen() {
 }
 
 void drawCardAt(unsigned char x, unsigned char y, unsigned char partial, const char* s, bool isHidden) {
+#if 0  
   static unsigned char cardgameVal, cardgameSuit;
   if (!isHidden)
   {
@@ -181,21 +184,27 @@ void drawCardAt(unsigned char x, unsigned char y, unsigned char partial, const c
   if (isHidden)
   {
     drawFaceDownCard(x, y);
-    printf("-");  
+//    printf("-");  
   }
   else
   {
     drawCompiledCard(cardgameVal, cardgameSuit, x, y);
-    printf("+");
+//    printf("+");
   }
-printf("%d,%d\n", x,y);
+//printf("%d,%d\n", x,y);
+#endif
 #endif
 
-
   
-#if 0  
+#if 1 
+  static unsigned char val, red, i, suit;
+  static unsigned mid;
+  mid = isHidden ? 0x7D7E : 0x0900;
+  //mid = 0x0900;
+
+printf("(%d, %d)", (int)x, (int)y);
   // Card top
-  //hires_putcc(x,y,ROP_O,0x0506); 
+  hires_putcc(x,y,ROP_O,0x0506); 
   hires_Mask(x,y+7,1,1, ROP_CONST(0b01111100)); 
   hires_Mask(x+1,y+7,1,1, ROP_CONST(0b00111111)); 
 
@@ -219,6 +228,7 @@ printf("%d,%d\n", x,y);
 }
 
 void drawCard(unsigned char x, unsigned char y, unsigned char partial, const char* s, bool isHidden) {
+  //printf("%d,%d\n", x,y);
   y*=8;
   y-=7;
   drawCardAt(x, y, partial, s, isHidden);
@@ -230,11 +240,11 @@ void drawLine(unsigned char x, unsigned char y, unsigned char w) {
   unsigned char x2;
   unsigned char y1;
   unsigned char y2;
-
+//printf("L%02x, %02x\n", x, y);
   x++;
   y++;
   x1= x *8 - 4; 
-  x2= x1 + w * 8;
+  x2= x1 + w * 8 - 4;
   y1= y * 8 - 4;
   y2= y1; // + h*8;
 
@@ -250,15 +260,22 @@ void drawBox(unsigned char x, unsigned char y, unsigned char w, unsigned char h)
   unsigned char x2;
   unsigned char y1;
   unsigned char y2;
-
+//debug_print("drawbox : %d, %d, %d, %d", x, y, w, h);
+#if 1
   x++;
   y++;
   h++;
   x1= x *8 - 4; 
-  x2= x1 + w * 8;
+  x2= x1 + (w+1) * 8 -4;
   y1= y * 8 - 4;
-  y2= y1 + 1 + h*8;
+  y2= y1 + 1 + h*8 -4;
+#else
+  x1= x;
+  y1= y*8;
+  x2= x1+w;
+  y2=y1;
 
+#endif
   Primitive_rectangle( x1, y1, x2, y2, 1, Primitive_setPixelPmode4, screenBuffer);
 
 #if 0  
@@ -332,4 +349,12 @@ void waitvsync() {
   static uint16_t i;
   // Aproximate a jiffy for the timer countdown
 //  for ( i=0;i<630;i++);
+}
+
+
+void hires_Mask(char xpos,    char ypos,
+                char xsize,   char ysize,
+                unsigned rop)
+{
+  
 }

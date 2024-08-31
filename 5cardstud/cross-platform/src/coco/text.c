@@ -29,6 +29,7 @@ void hires_double_buffer_draw()
 void hires_putc(unsigned char x, unsigned char y, unsigned rop, unsigned char c)
 {
 //hires_Draw(x,y,1,CHAR_HEIGHT,rop,&charset[c<<3]);
+  drawCompiledPixMap(x, y, &charset[c<<3], CHAR_HEIGHT, 1);
   drawTextAt(x,y,c);  
 }
 
@@ -36,7 +37,7 @@ void hires_putc(unsigned char x, unsigned char y, unsigned rop, unsigned char c)
 void hires_putcc(unsigned char x, unsigned char y,unsigned rop, unsigned cc)
 {
 //  drawTextAt(x,y,cc>>8);
-  drawTextAt(x,y,cc);
+//  drawTextAt(x,y,cc);
 }
 
 #endif

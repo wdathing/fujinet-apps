@@ -177,8 +177,6 @@ void updateState(unsigned char isTables) {
   }  
  // sprintf(tempBuffer, "%i", playerCount);
  // write_appkey(0x9999,  0x44, 0x44, tempBuffer);
-
- 
 }
 
 unsigned char apiCall(const char *path) {
